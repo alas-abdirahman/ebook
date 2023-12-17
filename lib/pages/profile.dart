@@ -134,11 +134,64 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildSaveButton() {
+    Future<bool> _showConfirmationDialog(BuildContext context) async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Confirm'),
+              content: const Text(
+                  "Are you sure you want to delete your account? This action cannot be undone."),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Delete'),
+                ),
+              ],
+            ),
+          ) ??
+          false; // Returning false if dialog is dismissed
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          ElevatedButton(
+            onPressed: () async {
+              // Confirm deletion with the user
+              bool confirmDeletion = await _showConfirmationDialog(context);
+              if (confirmDeletion) {
+                // Assuming you have the username stored in SharedPreferences
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? username = prefs.getString('username');
+
+                if (username != null) {
+                  // Delete the user account
+                  await DatabaseHelper.instance.deleteUser(username);
+
+                  // Log out the user
+                  await DatabaseHelper.logout();
+
+                  // Navigate to the sign-in or welcome page
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const SignInPage()), // Replace with your appropriate page
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, foregroundColor: Colors.white),
+            child: const Text('Delete Account'),
+          ),
+          const SizedBox(width: 20),
           ElevatedButton(
             onPressed: () async {
               // Call the logout function
@@ -160,8 +213,41 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(width: 20),
           ElevatedButton(
-            onPressed: () {
-              // Add save logic
+            onPressed: () async {
+              // Call update user method
+              bool success = await DatabaseHelper.instance.updateUser(
+                _username,
+                _usernameController.text.isEmpty
+                    ? null
+                    : _usernameController.text,
+                _emailController.text.isEmpty ? null : _emailController.text,
+                _oldPasswordController.text.isEmpty
+                    ? null
+                    : _oldPasswordController.text,
+                _newPasswordController.text.isEmpty
+                    ? null
+                    : _newPasswordController.text,
+              );
+
+              if (success) {
+                // Show success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('User details updated successfully'),
+                    backgroundColor: Colors
+                        .green, // Optional: green color for success messages
+                  ),
+                );
+              } else {
+                // Show error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Failed to update user details'),
+                    backgroundColor:
+                        Colors.red, // Optional: red color for error messages
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue, // Background color

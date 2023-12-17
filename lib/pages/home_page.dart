@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ebook/model/book.dart';
 import 'package:ebook/pages/book_info.dart';
+import 'package:ebook/pages/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -65,14 +66,13 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 20),
 
               _buildCategoryRow('Most Popular', () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const ExplorePage()),
-                // );
+                BaseWidget.changePageKey.currentState?.changePage(1);
               }),
               _buildCarousel(),
 
-              _buildCategoryRow('Latest', () {/* See all action */}),
+              _buildCategoryRow('Latest', () {
+                BaseWidget.changePageKey.currentState?.changePage(1);
+              }),
               _buildLatestBooks(), // Display the latest books
               // Implement your latest books section
             ],

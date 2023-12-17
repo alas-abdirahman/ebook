@@ -108,4 +108,62 @@ class DatabaseHelper {
     );
     return user.isNotEmpty;
   }
+
+  // Delete user account
+  Future<void> deleteUser(String username) async {
+    Database db = await instance.database;
+    await db.delete(
+      _tableName,
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+  }
+
+  Future<bool> updateUser(String oldUsername, String? newUsername,
+      String? newEmail, String? oldPassword, String? newPassword) async {
+    Database db = await instance.database;
+
+    // Preparing the data for update
+    Map<String, dynamic> updateData = {};
+    if (newUsername != null && newUsername.isNotEmpty) {
+      updateData['username'] = newUsername;
+    }
+    if (newEmail != null && newEmail.isNotEmpty) {
+      updateData['email'] = newEmail;
+    }
+
+    if (oldPassword != null &&
+        newPassword != null &&
+        oldPassword.isNotEmpty &&
+        newPassword.isNotEmpty &&
+        oldPassword != newPassword) {
+      // Check if the old password is correct
+      List<Map> result = await db.query(
+        _tableName,
+        where: 'username = ? AND password = ?',
+        whereArgs: [oldUsername, oldPassword],
+      );
+
+      if (result.isNotEmpty) {
+        updateData['password'] =
+            newPassword; // Consider hashing the new password
+      } else {
+        // Old password is incorrect
+        return false;
+      }
+    }
+
+    if (updateData.isNotEmpty) {
+      // Perform the update
+      await db.update(
+        _tableName,
+        updateData,
+        where: 'username = ?',
+        whereArgs: [oldUsername],
+      );
+      return true;
+    }
+
+    return false;
+  }
 }

@@ -9,6 +9,9 @@ class BaseWidget extends StatefulWidget {
 
   @override
   _BaseWidgetState createState() => _BaseWidgetState();
+
+  static final GlobalKey<_BaseWidgetState> changePageKey =
+      GlobalKey<_BaseWidgetState>();
 }
 
 class _BaseWidgetState extends State<BaseWidget> {
@@ -17,7 +20,7 @@ class _BaseWidgetState extends State<BaseWidget> {
   // List of widgets to use as different pages
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
-    ExplorePage(),  // Replace with actual screen
+    ExplorePage(), // Replace with actual screen
     FavoritePage(), // Replace with actual screen
     ProfilePage(), // Replace with actual screen
   ];
@@ -26,6 +29,15 @@ class _BaseWidgetState extends State<BaseWidget> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // Public method to change the page
+  void changePage(int index) {
+    if (index >= 0 && index < _widgetOptions.length) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -50,7 +62,9 @@ class _BaseWidgetState extends State<BaseWidget> {
               label: 'Explore'),
           BottomNavigationBarItem(
               icon: Icon(Icons.favorite,
-                  color: _selectedIndex == 2 ? Colors.blue : const Color.fromARGB(255, 17, 13, 13)),
+                  color: _selectedIndex == 2
+                      ? Colors.blue
+                      : const Color.fromARGB(255, 17, 13, 13)),
               label: 'Favorite'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_outline,

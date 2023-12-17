@@ -108,7 +108,8 @@ class _SignInPageState extends State<SignInPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const BaseWidget()),
+                              builder: (context) =>
+                                  BaseWidget(key: BaseWidget.changePageKey)),
                         );
                       } else {
                         // Authentication failed - show error message
