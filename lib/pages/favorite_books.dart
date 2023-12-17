@@ -29,8 +29,6 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
-    // allBooks = getFavoritedBooks();
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -56,7 +54,7 @@ class _FavoritePageState extends State<FavoritePage> {
         setState(() {
           if (value.isNotEmpty) {
             // Filter books as the user types in the search field
-            allBooks = allBooks.where((book) {
+            allBooks = getFavoritedBooks().where((book) {
               // Check if the search term is contained within book name, author, or year
               return book.bookName
                       .toLowerCase()
@@ -66,7 +64,7 @@ class _FavoritePageState extends State<FavoritePage> {
             }).toList();
           } else {
             // If the search input is empty, reset to display all books
-            allBooks = allBooks;
+            allBooks = getFavoritedBooks();
           }
         });
       },
@@ -102,9 +100,9 @@ class _FavoritePageState extends State<FavoritePage> {
                 setState(() {
                   _selectedCategory = category;
                   if (_selectedCategory == 'All') {
-                    allBooks = allBooks;
+                    allBooks = getFavoritedBooks();
                   } else {
-                    allBooks = allBooks.where((book) {
+                    allBooks = getFavoritedBooks().where((book) {
                       return book.category == _selectedCategory;
                     }).toList();
                   }

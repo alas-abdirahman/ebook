@@ -1,6 +1,7 @@
 import 'package:ebook/pages/explore.dart';
 import 'package:ebook/pages/favorite_books.dart';
 import 'package:ebook/pages/home_page.dart';
+import 'package:ebook/pages/profile.dart';
 import 'package:flutter/material.dart';
 
 class BaseWidget extends StatefulWidget {
@@ -18,7 +19,7 @@ class _BaseWidgetState extends State<BaseWidget> {
     HomePage(),
     ExplorePage(),  // Replace with actual screen
     FavoritePage(), // Replace with actual screen
-    // SettingsPage(), // Replace with actual screen
+    ProfilePage(), // Replace with actual screen
   ];
 
   void _onItemTapped(int index) {
@@ -49,12 +50,12 @@ class _BaseWidgetState extends State<BaseWidget> {
               label: 'Explore'),
           BottomNavigationBarItem(
               icon: Icon(Icons.favorite,
-                  color: _selectedIndex == 2 ? Colors.blue : Colors.black),
+                  color: _selectedIndex == 2 ? Colors.blue : const Color.fromARGB(255, 17, 13, 13)),
               label: 'Favorite'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings,
+              icon: Icon(Icons.person_outline,
                   color: _selectedIndex == 3 ? Colors.blue : Colors.black),
-              label: 'Settings'),
+              label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

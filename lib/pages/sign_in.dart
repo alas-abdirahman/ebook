@@ -1,6 +1,9 @@
+import 'package:ebook/helper/helper.dart';
+import 'package:ebook/model/user.dart';
 import 'package:ebook/pages/bottom_navigation.dart';
 import 'package:ebook/pages/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -12,6 +15,8 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,7 @@ class _SignInPageState extends State<SignInPage> {
                 const Text('Enter your credentials'),
 
                 TextFormField(
+                  controller: _usernameController,
                   decoration: const InputDecoration(
                     labelText: 'Username',
                     icon: Icon(Icons.person),
@@ -43,6 +49,7 @@ class _SignInPageState extends State<SignInPage> {
                   },
                 ),
                 TextFormField(
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     icon: const Icon(Icons.lock),
@@ -69,14 +76,50 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      print("clicked");
-                      // Replace the current route with the home page
-                      Navigator.push(
+                      // Assuming you have defined and initialized variables `username` and `password`
+                      String username = _usernameController.text;
+                      String password = _passwordController.text;
+
+                      // Perform authentication
+                      User? user = await DatabaseHelper.instance
+                          .authenticateUser(username, password);
+
+                      if (user != null) {
+                        // User is authenticated
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setBool('isLoggedIn', true);
+                        await prefs.setString('fullname', user.fullname);
+                        await prefs.setString('username', user.username);
+                        await prefs.setString('email', user.email);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'User logged in successfully. Redirecting to Home...'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        // Optionally, store other user data needed for the session
+
+                        // Navigate to the BaseWidget
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const BaseWidget()));
+                              builder: (context) => const BaseWidget()),
+                        );
+                      } else {
+                        // Authentication failed - show error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Authentication failed. Please try again.'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(

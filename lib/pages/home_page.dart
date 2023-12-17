@@ -1,4 +1,8 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ebook/model/book.dart';
+import 'package:ebook/pages/book_info.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,6 +12,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _username = "Guest"; // Default to "Guest"
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString('username');
+
+    setState(() {
+      _username = username ?? "Guest";
+    });
+  }
+
+  List<List<Book>> _groupBooks(List<Book> books, int groupSize) {
+    List<List<Book>> groupedBooks = [];
+    for (int i = 0; i < books.length; i += groupSize) {
+      int end = (i + groupSize < books.length) ? i + groupSize : books.length;
+      groupedBooks.add(books.sublist(i, end));
+    }
+    return groupedBooks;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,23 +51,29 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 20),
-              const Text('Hi, Welcome Guest',
-                  style:
-                      TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
+              const SizedBox(height: 20),
+              Text('Hi, Welcome $_username',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               const Text('Checkout new books groups events places and more!'),
-              SizedBox(height: 20),
-    
+              const SizedBox(height: 20),
+
               Align(
                 alignment: Alignment.center,
                 child: Image.asset('assets/images/b.png'),
               ), // Replace with your image path
-              SizedBox(height: 20),
-    
-              _buildCategoryRow('Most Popular', () {/* See all action */}),
-              _buildCarousel(), // Implement carousel widget for books
+              const SizedBox(height: 20),
+
+              _buildCategoryRow('Most Popular', () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const ExplorePage()),
+                // );
+              }),
+              _buildCarousel(),
+
               _buildCategoryRow('Latest', () {/* See all action */}),
+              _buildLatestBooks(), // Display the latest books
               // Implement your latest books section
             ],
           ),
@@ -60,7 +96,76 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCarousel() {
-    // Implement carousel using a package or custom implementation
-    return Container(); // Placeholder for carousel widget
+    List<Book> popularBooks = books.where((book) => book.popular).toList();
+    List<List<Book>> groupedBooks =
+        _groupBooks(popularBooks, 3); // Group books by 3s
+
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 200.0, // Adjust as needed
+        viewportFraction: 1.0, // Use full viewport width
+        enlargeCenterPage:
+            false, // Set to false for better layout with multiple items
+        autoPlay: true,
+      ),
+      items: groupedBooks.map((group) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: group.map((book) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BookInfoPage(book: book)),
+                    );
+                  },
+                  child: Image.asset(
+                    book.image,
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width / 3 -
+                        30, // Adjust width based on screen size
+                  ),
+                );
+              }).toList(),
+            );
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildLatestBooks() {
+    // Assuming 'books' is sorted by date or just take the last 3 books for simplicity
+    List<Book> latestBooks = books.reversed.take(3).toList();
+
+    return Container(
+      height: 200, // Adjust as needed
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: latestBooks.length,
+        itemBuilder: (context, index) {
+          Book book = latestBooks[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BookInfoPage(book: book)),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                book.image,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

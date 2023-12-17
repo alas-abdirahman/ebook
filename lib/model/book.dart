@@ -33,7 +33,7 @@ List<Book> books = [
     reference: "b1.pdf",
     image: "assets/images/b1.png",
     isFavorited: false,
-    popular: false,
+    popular: true,
   ),
   Book(
     category: "Story",
@@ -57,7 +57,7 @@ List<Book> books = [
     reference: "b3.pdf",
     image: "assets/images/b3.png",
     isFavorited: false,
-    popular: false,
+    popular: true,
   ),
   // Add more books as needed
 ];
