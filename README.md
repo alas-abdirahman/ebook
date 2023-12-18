@@ -1,16 +1,51 @@
-# ebook
+## eBook App
+# Description
+The eBook App is a mobile application developed using Flutter, designed to provide users with a convenient and enjoyable digital reading experience. The app allows users to browse, read, and interact with a variety of PDF books stored within the app's assets. Featuring a user-friendly interface and essential functionalities for a seamless reading experience, this app is perfect for avid readers and casual browsers alike.
 
-A new Flutter project.
+# Features
+PDF Reading: Users can read PDF files directly within the app.
+Interactive Navigation: Easy navigation through the content with a bottom navigation bar.
+Customizable Viewing: Includes features like pinch-to-zoom for adjusting the view.
+Page Selection: Ability to jump to a specific page through an intuitive interface.
+Bookmarking System: Utilizes SQLite database for bookmarking favorite pages.
+Responsive Design: Ensures a consistent user experience across various devices.
 
-## Getting Started
+# Use Cases
+Leisure Reading: Ideal for users looking to enjoy books on-the-go.
+Educational Purposes: Useful for students and educators for accessing educational material.
+Professional Reference: Professionals can use it to reference manuals, guides, and other materials.
 
-This project is a starting point for a Flutter application.
+# Tools and Technologies
+Flutter: Cross-platform UI toolkit used for building natively compiled applications.
+flutter_pdfview: A Flutter plugin for viewing PDF files.
+SQLite: Used for managing user bookmarks and preferences.
+Dart: Primary programming language for development.
+Database Design
+The app uses SQLite to manage user data. The database schema includes:
 
-A few resources to get you started if this is your first Flutter project:
+Table for bookmarks: Storing user bookmarks with fields such as bookId, pageNumber, title, and dateAdded.
+Getting Started
+To run the app on your device, follow these steps:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Clone the repository: git clone [repository-url].
+Navigate to the project directory: cd ebook_app.
+Install dependencies: flutter pub get.
+Run the app: flutter run.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Snapshots
+Include snapshots of your app here to showcase its features and user interface.
+
+Welcome Screen
+Sign in / up Screens
+Home Screen
+Explore Screen
+Reading Screen
+Favorite Screen
+Profile Screen
+
+# Contributing
+Contributions to the eBook App are welcome. Please read CONTRIBUTING.md for details on our code of conduct and the process for submitting pull requests.
+
+# License
+This project is licensed under the MIT License.
+
