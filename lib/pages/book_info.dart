@@ -68,7 +68,7 @@ class BookInfoPage extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => PdfViewerPage(
-                filePath: 'assets/books/${book.reference}',
+                filePath: book.reference,
               ),
             ),
           );
